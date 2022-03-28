@@ -8,7 +8,7 @@ import { nanoid } from "nanoid"
 const print = (arg) => console.log(arg)
 
 //changes using setData will trigger a progress calculation
-export default function DropGrid({grid, setGrid }) {
+export default function DropGrid({grid, setGrid, progress, setProgress}) {
 
     const [dragSrc, setDrgSrc] = useState()
 
@@ -38,8 +38,18 @@ export default function DropGrid({grid, setGrid }) {
         //if this is an external drag, dragSrc will be null
         else {
             var objIndex = ev.dataTransfer.getData("text");
-            grid[x][y].obj = INIT.flowers[objIndex]
 
+            if(grid[x][y].obj){
+                const currentProps = grid[x][y].obj.props
+                grid[x][y].obj = INIT.flowers[objIndex]
+                progress.addFlowerProp(currentProps,grid[x][y].obj.props)
+
+            } else {
+                grid[x][y].obj = INIT.flowers[objIndex]
+                progress.addFlowerProp([],grid[x][y].obj.props)
+
+            }
+            setProgress(progress)
         }
         //call Game.js to store in state
         setGrid([...grid])

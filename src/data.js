@@ -21,41 +21,48 @@ class Flower{
 }
 
 class Progress{
-
+    #totalProps = 0
     constructor(){
         this.progress = new Map();
     }
 
-    get current () {
-        return this.progress
-    }
-
-    set current(allFlowerProps) {
-        for (const key in allFlowerProps) {
-            if (Object.hasOwnProperty.call(allFlowerProps, key)) {
-                this.progress.set(key,allFlowerProps[key])
+    get now() {
+        let now = {}
+        this.progress.forEach( (val, key) => {
+            if(val > 0) {
+                now[key] = val / this.#totalProps
             }
-        }
-        //debug set current
-        console.log(this.current)
+        })
+        return now
     }
 
-    removeProgress(flowerProp) {
-        if(typeof flowerProp === typeof new Array){
-            
-        } else {
+    addFlowerProp(oldPropsArr=[], newPropsArr=[]){
 
-        }
+        oldPropsArr.forEach(
+            (prop) => {
+                const propState = this.progress.get(prop)
 
-        if(this.progress.has(flowerProp.name)){
-            this.progress.delete(flowerProp.name)
-        }
+                if(propState - 1 <= 0){
+                    this.progress.delete(prop)
+                } else {
+                    this.progress.set(prop,propState - 1)
+                }
+                this.#totalProps -= 1
+            }
+        )
+
+        newPropsArr.forEach(
+            (prop) => {
+                this.progress.set(prop, this.progress.get(prop) ? this.progress.get(prop) + 1 : 1)
+                this.#totalProps += 1
+            }
+        )
     }
 }
 
 export const INIT = {
     levels: [
-        {name: "New Job", desc: "", reqs: {friendship: 0.3, humility: 0.3, esteem: 0.3} },
+        {name: "New Job", desc: "", reqs: {Friendship: 1, Humility: 1, Esteem: 1} },
     ],
     flowers: [
         new Flower("Red Rose",["Romance"],"logo.svg"),
