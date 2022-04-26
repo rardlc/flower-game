@@ -6,11 +6,14 @@ class Flower{
     img = ""
     markdown = ""
     actions = []
-
-    constructor(name, props, imgPath, markdown=null, actions=[]) {
+    color = ""
+    constructor(name, props, imgPath,color=null, markdown=null, actions=[]) {
         this.name = name;
         this.props = props;
         this.img = imgPath;
+        if(color){
+            this.color = color
+        }
         if(markdown){
             this.markdown = markdown;
         } else {
@@ -27,7 +30,7 @@ class Progress{
     }
 
     get now() {
-        let now = {}
+        let now = new Map()
         this.progress.forEach( (val, key) => {
             if(val > 0) {
                 now[key] = val / this.#totalProps
@@ -58,6 +61,8 @@ class Progress{
             }
         )
     }
+
+    
 }
 
 export const INIT = {
@@ -65,10 +70,10 @@ export const INIT = {
         {name: "New Job", desc: "", reqs: {Friendship: 1, Humility: 1, Esteem: 1} },
     ],
     flowers: [
-        new Flower("Red Rose",["Romance"],"logo.svg"),
-        new Flower("Yellow Acacia",["Friendship"],"logo.svg"),
-        new Flower("Bird of Paradise",["Esteem"],""),
-        new Flower("Bluebell",["Humility"],"")
+        new Flower("Red Rose",["Romance"],"logo.svg","red"),
+        new Flower("Yellow Acacia",["Friendship"],"logo.svg","yellow"),
+        new Flower("Bird of Paradise",["Esteem"],"","orange"),
+        new Flower("Bluebell",["Humility"],"","blue")
     ],
     progress: new Progress()
 }

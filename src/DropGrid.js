@@ -16,26 +16,32 @@ export default function DropGrid({grid, setGrid, progress, setProgress}) {
         ev.preventDefault();
     }
 
-    function drag(x,y) {
-        setDrgSrc( {"x":x,"y":y} )
+    function drag(ev, x,y) {
+        ev.dataTransfer.setData("text", x + " " + y)
     }
 
     function drop(ev, x, y) {
+        ev.stopPropagation();
         ev.preventDefault();
 
-        //if this is an internal drag
-        if(dragSrc){
+        let srcI = ev.dataTransfer.getData("text").split(" ")
 
-            if(grid[dragSrc.x][dragSrc.y].obj === null && grid[x][y].obj === null){
+        //if this is an internal drag
+        if(srcI[1]){
+
+            if(grid[srcI[0]][srcI[1]].obj === null && grid[x][y].obj === null){
                 return
             }
             //exchange objs between dragging and drop target
             const targetObj = grid[x][y].obj
 
-            grid[x][y].obj = grid[dragSrc.x][dragSrc.y].obj
-            grid[dragSrc.x][dragSrc.y].obj = targetObj
+            grid[x][y].obj = grid[srcI[0]][srcI[1]].obj
+            console.log(targetObj)
+            grid[ srcI[0] ][ srcI[1] ].obj = targetObj
+
         } 
-        //if this is an external drag, dragSrc will be null
+
+        //if this is an external drag, dragI will be 1 element
         else {
             var objIndex = ev.dataTransfer.getData("text");
 
@@ -43,6 +49,7 @@ export default function DropGrid({grid, setGrid, progress, setProgress}) {
                 const currentProps = grid[x][y].obj.props
                 grid[x][y].obj = INIT.flowers[objIndex]
                 progress.addFlowerProp(currentProps,grid[x][y].obj.props)
+                
 
             } else {
                 grid[x][y].obj = INIT.flowers[objIndex]
@@ -50,12 +57,14 @@ export default function DropGrid({grid, setGrid, progress, setProgress}) {
 
             }
             setProgress(progress)
+
         }
         //call Game.js to store in state
         setGrid([...grid])
 
         //cleanup
-        setDrgSrc(null)
+        ev.dataTransfer.setData("text", "");
+
     }
 
     return (
@@ -71,8 +80,8 @@ export default function DropGrid({grid, setGrid, progress, setProgress}) {
                                         {row.map(
                                             (col,colI) => {
                                                 const cellId = col.id
-                                                const cell = <div draggable id={cellId} key={cellId} style={{
-                                                }} className="gridCell" onDragStart={() => drag(rowI,colI)} onDrop={(ev) => drop(ev,rowI,colI)} onDragOver={allowDrop}>
+                                                const cell = <div draggable id={rowI + " " + colI} key={cellId} style={{
+                                                }} className="gridCell" onDragStart={(ev) => drag(ev,rowI,colI)} onDrop={(ev) => drop(ev,rowI,colI)} onDragOver={allowDrop}>
                                                     {col.obj ? col.obj.name : null}
                                                     {/* <p>{cellId}</p> */}
 

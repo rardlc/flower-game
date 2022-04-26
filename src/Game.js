@@ -16,11 +16,21 @@ export default function Game() {
 
   const [level, setLevel] = useState(INIT.levels[0])
 
-  //represent the grid markup
-  const [grid, setGrid, gridSig] = useCoolerState()
-  
+  //represent the grid markup and contains collisionless ids
+  const [grid, setGrid] = useState()
+
+  //acess by markup id values in grid
+  // const [gridHash, setGridHash] = useState()
+
   const [progress, setProgress, progressSignature] = useCoolerState(INIT.progress)
 
+  // 
+
+  useEffect(() => {
+
+    // console.log(progress.now)
+
+  },[progressSignature])
 
   useEffect(() => {
     setGrid([
@@ -29,27 +39,25 @@ export default function Game() {
 
   },[])
 
+  function deleteDrop(ev){
+    ev.preventDefault()
 
-  useEffect(() => {
-    //whenever progress changes, 
-    console.log(progress.now)
+    let dataIndex = ev.dataTransfer.getData("text").split(" ")
+    if(dataIndex[1]){
+      grid[dataIndex[0]][dataIndex[1]].obj = null
+      setGrid([...grid])
+    }
+  }
 
-  },[progressSignature])
-
-
-
-
-
+  
   return (
-    <div className="App">
+    <div className="App" onDragOver={(ev) => ev.preventDefault()} onDrop={deleteDrop}>
       <header className="App-header">
-        <ProgressBar progress={progress}></ProgressBar>
+        <ProgressBar progress={progress.now}></ProgressBar>
 
-        <p>Drag the image into the rectangle:</p>
-        <DropGrid grid={grid} setGrid={setGrid} progress={progress} setProgress={setProgress} ></DropGrid>
+        <p>Drag the flower into the rectangle:</p>
+        <DropGrid grid={grid} setGrid={setGrid} progress={progress} setProgress={setProgress}></DropGrid>
         <Inventory options={INIT.flowers}></Inventory>
-        <br></br>
-        {/* <img style={{accentColor: 'blue'}} id="drag1" src="" draggable="true" onDragStart={drag} width="336" height="69" /> */}
 
       </header>
     </div>

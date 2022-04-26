@@ -35,6 +35,10 @@ header {
   display: flex;
 }
 
+.progressBar {
+  width: 320px;
+}
+
 .gridCell {
   font-size: medium;
 
